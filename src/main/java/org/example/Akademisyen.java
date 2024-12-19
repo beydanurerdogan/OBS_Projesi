@@ -3,96 +3,40 @@ package org.example;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Akademisyen extends Kullanici{
-    NotYonetimi not = new NotYonetimi();
+public class Akademisyen extends Kullanici {
+    private ArrayList<Ders> verdigiDersler = new ArrayList<>();
 
-    public Akademisyen(String ad, String soyad, String tip, String sifre,String ders) {
-        super(ad, soyad, tip, sifre,ders);
+    public Akademisyen(String ad, String soyad, String tip, String sifre) {
+        super(ad, soyad, tip, sifre);
     }
 
-    public void akademisyenGiris(ArrayList<Kullanici> akademisyenler, ArrayList<Kullanici> ogrenciler) {
+    public void dersEkle(Ders ders) {
+        verdigiDersler.add(ders);
+    }
 
+    public void akademisyenIslemleri() {
         Scanner scanner = new Scanner(System.in);
-        Kullanici seciliakademisyenler = null;
-        String kullanıcı="";
-        boolean akdkontrol =true;
-        while(akdkontrol) {
+        boolean devam = true;
 
-            System.out.print("Kullanıcı adı: ");
-            kullanıcı = scanner.nextLine();
-            System.out.print("Şifre: ");
-            String parola = scanner.nextLine();
-
-
-            for (Kullanici a : akademisyenler) {
-                if (a.ad.equalsIgnoreCase(kullanıcı) || a.sifre.equalsIgnoreCase(parola)) {
-                    seciliakademisyenler = a;
-                }
+        while (devam) {
+            System.out.println("Dersleriniz:");
+            for (int i = 0; i < verdigiDersler.size(); i++) {
+                System.out.println((i + 1) + ". " + verdigiDersler.get(i).getDersAdi());
             }
-            if (!seciliakademisyenler.ad.equalsIgnoreCase(kullanıcı) || !seciliakademisyenler.sifre.equalsIgnoreCase(parola)) {
-                System.out.println("Kullanıcı adı yada şifre hatalı!");
 
-            }
-            else {
-                akdkontrol =false;
-            }
-        }
-        Akademisyen seciliakademisyen = (Akademisyen) seciliakademisyenler;
-        boolean devamEtmekIstiyorMu = true;
+            System.out.print("Not girişi yapmak istediğiniz dersi seçin: ");
+            int secim = Integer.parseInt(scanner.nextLine()) - 1;
 
-        while (devamEtmekIstiyorMu) {
-
-            ArrayList<Kullanici> uygunOgrenciler = new ArrayList<>();
-            if (seciliakademisyen.tip.equals("Profesör")) {
-                for (Kullanici o : ogrenciler) {
-                    if (o.tip.equals("Ön Lisans")) {
-                        uygunOgrenciler.add(o);
-                    }
-                }
+            if (secim >= 0 && secim < verdigiDersler.size()) {
+                Ders seciliDers = verdigiDersler.get(secim);
+                seciliDers.notGirisi(this);
             } else {
-                for (Kullanici o : ogrenciler) {
-                    if (o.tip.equals("Lisans")) {
-                        uygunOgrenciler.add(o);
-                    }
-                }
-            }
-
-            if (uygunOgrenciler.isEmpty()) {
-                System.out.println("Bu akademisyene uygun öğrenci yok.");
-                return;
-            }
-
-            System.out.println("Öğrenciler:");
-            for (int i = 0; i < uygunOgrenciler.size(); i++) {
-                System.out.println((i + 1) + ". " + uygunOgrenciler.get(i));
-            }
-
-            System.out.print("Bir öğrenci seçiniz: ");
-            int ogrenciIndex = Integer.parseInt(scanner.nextLine()) - 1;
-
-            if (ogrenciIndex < 0 || ogrenciIndex >= uygunOgrenciler.size()) {
                 System.out.println("Geçersiz seçim.");
-                return;
             }
 
-            Ogrenci seciliOgrenci =(Ogrenci) uygunOgrenciler.get(ogrenciIndex);
-
-            System.out.print(seciliakademisyen.ders + " dersine not giriniz: ");
-            int notGirisi = Integer.parseInt(scanner.nextLine());
-
-            if (notGirisi <0 || notGirisi > 100) {
-                System.out.println("Sadece 0 ile 100 arasında bir not girebilirsiniz !");
-            }else {
-                not.notgiris(seciliakademisyen,seciliOgrenci,seciliakademisyen.ders,notGirisi);
-            }
-
-            System.out.print("Başka bir  not girmek ister misiniz? (E/H): ");
-            String devam = scanner.nextLine();
-
-            if (devam.equalsIgnoreCase("H")) {
-                devamEtmekIstiyorMu = false;
-            }
+            System.out.print("Başka bir işlem yapmak ister misiniz? (E/H): ");
+            String devamCevap = scanner.nextLine();
+            devam = devamCevap.equalsIgnoreCase("E");
         }
     }
-
 }

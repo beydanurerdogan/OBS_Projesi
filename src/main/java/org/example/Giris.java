@@ -4,51 +4,100 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Giris {
-
-    public void menu(){
+    public void menu() {
         Scanner scanner = new Scanner(System.in);
         ArrayList<Kullanici> kullanicilar = new ArrayList<>();
+        ArrayList<Ders> dersler = new ArrayList<>();
 
+        Akademisyen akademisyen1 = new Akademisyen("AHMET", "YILMAZ", "Profesör", "1111");
+        Akademisyen akademisyen2 = new Akademisyen("ELİF", "DEMİR", "Doçent", "2222");
+        Ogrenci ogrenci1 = new Ogrenci("ALİ", "DEMİR", "Ön Lisans", "1414");
+        Ogrenci ogrenci2 = new Ogrenci("MERVE", "YARTAS", "Lisans", "1515");
 
+        kullanicilar.add(akademisyen1);
+        kullanicilar.add(akademisyen2);
+        kullanicilar.add(ogrenci1);
+        kullanicilar.add(ogrenci2);
 
-        kullanicilar.add(new Akademisyen("AHMET", "YILMAZ", "Profesör", "1111","İNTERNET PROGRAMCILIĞI"));
-        kullanicilar.add(new Akademisyen("ELİF", "DEMİR", "Profesör", "2222","NESNE TABANLI PROGRAMLAMA"));
-        kullanicilar.add(new Akademisyen("BELGİN", "AKGÖL", "Profesör", "3333","VERİTABANI VE YÖNETİMİ"));
-        kullanicilar.add(new Akademisyen("FATMA", "AYDIN", "Profesör", "4444","GÖRSEL PROGRAMLAMA"));
-        kullanicilar.add(new Akademisyen("HASAN", "ÖZTÜRK", "Profesör", "5555","İNGİLİZCE"));
-        kullanicilar.add(new Akademisyen("EMRE", "CAN", "Profesör", "6666","SANALLAŞTIRMA VE BULUT BİLİŞİM SİSTEMLERİ"));
-        kullanicilar.add(new Akademisyen("MEHMET", "KARA", "Doçent", "7777","İLERİ PROGRAMLAMA"));
-        kullanicilar.add(new Akademisyen("ERTUĞRUL", "DUMAN", "Doçent", "8888","DATA STRUCTURES"));
-        kullanicilar.add(new Akademisyen("GÖKHAN", "ARSLAN", "Doçent", "9999","OLASILIK VE İSTATİSTİK"));
-        kullanicilar.add(new Akademisyen("MELİKE", "ÇOBAN", "Doçent", "1010","ELEKTRİK VE ELEKTRONİK DEVRELER"));
-        kullanicilar.add(new Akademisyen("SELİN", "YÜCEL", "Doçent", "1212","DIFFERENTIAL EQUATIONS"));
-        kullanicilar.add(new Akademisyen("BURAK", "KESKİN", "Doçent", "1313","ACADEMIC ENGLISH"));
-        kullanicilar.add(new Ogrenci("ALİ", "DEMİR", "Ön Lisans", "1414"));
-        kullanicilar.add(new Ogrenci("MERVE", "YARTAS", "Ön Lisans", "1515"));
-        kullanicilar.add(new Ogrenci("ELİF", "KARAPINAR", "Lisans", "1616"));
-        kullanicilar.add(new Ogrenci("AYŞE", "ÇELİK", "Lisans", "1717"));
+        Ders ders1 = new Ders("İNTERNET PROGRAMCILIĞI");
+        Ders ders2 = new Ders("NESNE TABANLI PROGRAMLAMA");
 
-        while (true) {
-            System.out.println("1 -> Akademisyen Giriş");
-            System.out.println("2 -> Öğrenci Giriş");
-            System.out.println("3 -> Çıkış");
+        dersler.add(ders1);
+        dersler.add(ders2);
+
+        ders1.setAkademisyen(akademisyen1);
+        ders2.setAkademisyen(akademisyen2);
+
+        ders1.ogrenciEkle(ogrenci1);
+        ders2.ogrenciEkle(ogrenci2);
+
+        boolean cikis = false;
+        while (!cikis) {
+            System.out.println("1. Kullanıcı Girişi");
+            System.out.println("2. Şifre Değiştir");
+            System.out.println("3. Çıkış");
             System.out.print("Seçiminiz: ");
-            String secim = scanner.nextLine();
+            int secim = Integer.parseInt(scanner.nextLine());
 
             switch (secim) {
-                case "1":
-                    new Akademisyen("", "", "", "","").akademisyenGiris(kullanicilar, kullanicilar);
+                case 1:
+                    login(kullanicilar);
                     break;
-                case "2":
-                    new Ogrenci("", "", "", "").ogrenciGiris(kullanicilar);
+                case 2:
+                    System.out.print("Kullanıcı Adı: ");
+                    String kullaniciAdi = scanner.nextLine();
+                    Kullanici bulunanKullanici = null;
+                    for (Kullanici k : kullanicilar) {
+                        if (k.ad.equalsIgnoreCase(kullaniciAdi)) {
+                            bulunanKullanici = k;
+                            break;
+                        }
+                    }
+                    if (bulunanKullanici != null) {
+                        System.out.print("Yeni Şifre: ");
+                        String yeniSifre = scanner.nextLine();
+                        bulunanKullanici.sifreDegistir(yeniSifre);
+                    } else {
+                        System.out.println("Kullanıcı bulunamadı.");
+                    }
                     break;
-                case "3":
-                    System.out.println("Çıkış yapılıyor...");
-                    return;
+                case 3:
+                    cikis = true;
+                    break;
                 default:
-                    System.out.println("Geçersiz seçim!");
-                    break;
+                    System.out.println("Geçersiz seçim.");
             }
+        }
+    }
+
+    private void login(ArrayList<Kullanici> kullanicilar) {
+        Scanner scanner = new Scanner(System.in);
+        Kullanici seciliKullanici = null;
+        boolean kontrol = true;
+
+        while (kontrol) {
+            System.out.print("Kullanıcı adı: ");
+            String kullaniciAdi = scanner.nextLine();
+            System.out.print("Şifre: ");
+            String sifre = scanner.nextLine();
+
+            for (Kullanici k : kullanicilar) {
+                if (k.ad.equalsIgnoreCase(kullaniciAdi) && k.sifre.equals(sifre)) {
+                    seciliKullanici = k;
+                    kontrol = false;
+                    break;
+                }
+            }
+
+            if (seciliKullanici == null) {
+                System.out.println("Kullanıcı adı veya şifre hatalı!");
+            }
+        }
+
+        if (seciliKullanici instanceof Akademisyen) {
+            ((Akademisyen) seciliKullanici).akademisyenIslemleri();
+        } else if (seciliKullanici instanceof Ogrenci) {
+            ((Ogrenci) seciliKullanici).ogrenciIslemleri();
         }
     }
 }
